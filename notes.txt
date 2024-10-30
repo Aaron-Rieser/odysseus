@@ -1,0 +1,21 @@
+This time database will start in Railway
+
+new db in railway: odysseus
+new server in pgadmin: odysseus
+
+db public url + details
+
+postgresql://postgres:beMgxFMrbWAKGwqZrlpTttqHffXRuFLo@junction.proxy.rlwy.net:27421/railway
+
+github repository
+
+https://github.com/Aaron-Rieser/odysseus
+
+github pages, tbd
+
+needed extensions
+
+npm init
+npm install pg
+npm install express
+test command: node index.js

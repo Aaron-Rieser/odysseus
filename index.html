@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Posts</title>
+</head>
+<body>
+    <h1>Create a New Post</h1>
+    <form action="/submit-post" method="POST">
+        <div>
+            <label for="neighbourhood">Neighbourhood:</label>
+            <input type="text" id="neighbourhood" name="neighbourhood" required>
+        </div>
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="post">Post:</label>
+            <textarea id="post" name="post" required></textarea>
+        </div>
+        <button type="submit">Submit Post</button>
+    </form>
+</body>
+</html>
