@@ -1,4 +1,7 @@
 This time database will start in Railway
+Building off Database test 4
+
+STUCK - project in railway, works on the web, but DB not working. This is where we'll pick-up tmrw.
 
 new db in railway: odysseus
 new server in pgadmin: odysseus
