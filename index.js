@@ -1,7 +1,7 @@
 const express = require('express');
 const { Client } = require('pg');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
@@ -9,9 +9,9 @@ app.use(express.static('public'));
 
 // Database configuration
 const client = new Client({
-    connectionString: 'postgresql://postgres:AFCcwrdBsoRrHXODQLhDrcCTQslOyYpg@junction.proxy.rlwy.net:24384/railway',
+    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:AFCcwrdBsoRrHXODQLhDrcCTQslOyYpg@junction.proxy.rlwy.net:24384/railway',
     ssl: {
-        rejectUnauthorized: false // Required for Railway
+        rejectUnauthorized: false
     }
 });
 
@@ -19,9 +19,12 @@ const client = new Client({
 client.connect()
     .then(() => {
         console.log("Connected successfully to database");
-        // Only start the server after successful DB connection
-        app.listen(port, () => {
-            console.log(`Server running at http://localhost:${port}`);
+        // Add error handling for the server start
+        const server = app.listen(port, '0.0.0.0', () => { // Listen on all network interfaces
+            console.log(`Server running on port ${port}`);
+        }).on('error', (err) => {
+            console.error('Server failed to start:', err);
+            process.exit(1);
         });
     })
     .catch(e => {
