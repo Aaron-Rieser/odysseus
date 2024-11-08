@@ -1,7 +1,7 @@
 const express = require('express');
 const { Client } = require('pg');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
@@ -15,24 +15,36 @@ const client = new Client({
     }
 });
 
+let server; // Declare server variable outside
+
 // Connect to database when server starts
 client.connect()
     .then(() => {
         console.log("Connected successfully to database");
-        // Add error handling for the server start
-        const server = app.listen(port, '0.0.0.0', () => { // Listen on all network interfaces
-            console.log(`Server running on port ${port}`);
-        }).on('error', (err) => {
-            console.error('Server failed to start:', err);
-            process.exit(1);
-        });
+        // Start server only if not already running
+        if (!server) {
+            server = app.listen(port, '0.0.0.0', () => {
+                console.log(`Server running on port ${port}`);
+            });
+
+            // Handle server errors
+            server.on('error', (error) => {
+                if (error.code === 'EADDRINUSE') {
+                    console.error(`Port ${port} is already in use`);
+                    process.exit(1);
+                } else {
+                    console.error('Server error:', error);
+                    process.exit(1);
+                }
+            });
+        }
     })
     .catch(e => {
         console.error("Database connection error:", e);
         process.exit(1);
     });
 
-// Your existing routes remain unchanged
+// Your routes
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
@@ -52,21 +64,35 @@ app.post('/submit-post', async (req, res) => {
     }
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
-
-// Handle cleanup on server shutdown
+// Enhanced shutdown handlers
 process.on('SIGTERM', async () => {
     console.log('Shutting down server...');
-    await client.end();
-    process.exit(0);
+    if (server) {
+        server.close(() => {
+            console.log('Server closed');
+            client.end().then(() => {
+                console.log('Database connection closed');
+                process.exit(0);
+            });
+        });
+    } else {
+        await client.end();
+        process.exit(0);
+    }
 });
 
-// Also handle SIGINT (Ctrl+C)
 process.on('SIGINT', async () => {
     console.log('Shutting down server...');
-    await client.end();
-    process.exit(0);
+    if (server) {
+        server.close(() => {
+            console.log('Server closed');
+            client.end().then(() => {
+                console.log('Database connection closed');
+                process.exit(0);
+            });
+        });
+    } else {
+        await client.end();
+        process.exit(0);
+    }
 });
