@@ -1,7 +1,11 @@
 const express = require('express');
 const { Client } = require('pg');
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
+
+// Debug logging
+console.log('Environment PORT:', process.env.PORT);
+console.log('Using port:', port);
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
@@ -15,7 +19,7 @@ const client = new Client({
     }
 });
 
-let server; // Declare server variable outside
+let server; // Declare server variable
 
 // Connect to database when server starts
 client.connect()
@@ -24,7 +28,7 @@ client.connect()
         // Start server only if not already running
         if (!server) {
             server = app.listen(port, '0.0.0.0', () => {
-                console.log(`Server running on port ${port}`);
+                console.log(`Server running on host: 0.0.0.0, port: ${port}`);
             });
 
             // Handle server errors
