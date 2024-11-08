@@ -27,8 +27,10 @@ client.connect()
         console.log("Connected successfully to database");
         // Start server only if not already running
         if (!server) {
-            server = app.listen(port, '0.0.0.0', () => {
-                console.log(`Server running on host: 0.0.0.0, port: ${port}`);
+            server = app.listen(port, "0.0.0.0", function() {  // Changed to match Railway's format exactly
+                console.log(`Server is running on http://0.0.0.0:${port}`);
+                console.log('Environment PORT:', process.env.PORT);
+                console.log('Using port:', port);
             });
 
             // Handle server errors
